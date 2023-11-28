@@ -7,7 +7,7 @@ import (
 	"strings"
 )
 
-func ValidateChecksum(key string) (bool, error) {
+func ValidateApiKey(key string) (bool, error) {
 	var (
 		keyParts []string
 		secret   []byte
