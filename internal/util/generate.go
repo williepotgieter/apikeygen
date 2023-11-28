@@ -2,10 +2,10 @@ package util
 
 import (
 	"crypto/rand"
-	"fmt"
+	"hash/crc32"
 )
 
-func GenerateRandomString(n int) (string, error) {
+func GenerateRandomBytes(n int) ([]byte, error) {
 	var (
 		result           []byte
 		randomCharacters []byte
@@ -15,7 +15,7 @@ func GenerateRandomString(n int) (string, error) {
 	)
 
 	isCharacter := func(code byte) bool {
-		return (code >= 97 && code <= 122)
+		return (code >= 97 && code <= 122) || (code >= 65 && code <= 90)
 	}
 
 	isDigit := func(code byte) bool {
@@ -46,17 +46,17 @@ func GenerateRandomString(n int) (string, error) {
 		return randomBytes, nil
 	}
 
-	// characters => 97-122 / 65-90
-	// number => 48-57
+	// ASCII characters a-z => 97-122 / 65-90
+	// ASCII digits 0-9 => 48-57
 
 	// Generate slize of random letters
 	if randomCharacters, err = makeRandomBytes(isCharacter); err != nil {
-		return "", err
+		return nil, err
 	}
 
 	// Generate slice of random digits
 	if randomDigits, err = makeRandomBytes(isDigit); err != nil {
-		return "", err
+		return nil, err
 	}
 
 	// Combine the random letters and random digit slices into a
@@ -67,14 +67,18 @@ func GenerateRandomString(n int) (string, error) {
 
 	// Shuffle the combined list
 	if result, err = shuffle(result); err != nil {
-		return "", err
+		return nil, err
 	}
 
-	fmt.Println("BEFORE", result)
 	// Choose only the first n characters in the list
 	result = result[:n]
 
-	fmt.Println("AFTER", result)
+	return result, nil
+}
 
-	return string(result), nil
+func GenerateChecksum(b []byte) uint32 {
+	hasher := crc32.NewIEEE()
+	hasher.Write(b)
+
+	return hasher.Sum32()
 }
