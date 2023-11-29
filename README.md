@@ -1,5 +1,5 @@
 # keymaker
-
+Zero dependency Go package for generating & validating API keys
 ## Overview
 
 Keymaker is a zero-dependency `Golang` package that makes it easy to generate API keys in your application.
